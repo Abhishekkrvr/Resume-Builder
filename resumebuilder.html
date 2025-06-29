@@ -1,0 +1,1312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="CodeResume - Generate professional resumes with code in real-time">
+  <meta name="keywords" content="resume builder, code resume, cv generator">
+  <meta name="author" content="CodeResume">
+  <title>Andy's Resume - Generate Beautiful Resumes with Code</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="https://cdn.pixabay.com/photo/2017/03/08/21/20/flat-2127930_960_720.png">
+  
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Roboto+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+  
+  <!-- html2pdf library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  
+  <!-- CodeMirror for code editor -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material-darker.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/theme/material.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/xml/xml.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/javascript/javascript.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/css/css.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/htmlmixed/htmlmixed.min.js"></script>
+  
+  <!-- SplitJS for resizable panels -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.5/split.min.js"></script>
+
+  <!-- Main stylesheets -->
+  <style id="app-style">
+    :root {
+      --primary: #6366f1;
+      --primary-light: #818cf8;
+      --primary-dark: #4f46e5;
+      --secondary: #10b981;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray-800: #1e293b;
+      --gray-700: #334155;
+      --gray-600: #475569;
+      --gray-500: #64748b;
+      --gray-400: #94a3b8;
+      --gray-300: #cbd5e1;
+      --gray-200: #e2e8f0;
+      --gray-100: #f1f5f9;
+      --border-radius: 8px;
+      --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+      --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s ease;
+      --font-family: 'Inter', sans-serif;
+      --font-family-code: 'Roboto Mono', monospace;
+      --font-family-resume: 'DM Sans', sans-serif;
+    }
+    
+    .dark-theme {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --border-color: #334155;
+      --scrollbar-thumb: #475569;
+      --scrollbar-track: #1e293b;
+      --button-bg: #4f46e5;
+      --button-hover: #4338ca;
+      --tooltip-bg: #334155;
+      --toast-bg: #1e293b;
+      --toast-border: #334155;
+      --input-bg: #1e293b;
+      --input-border: #334155;
+      --input-text: #f8fafc;
+      --resume-bg: #f8fafc;
+      --resume-text: #1e293b;
+    }
+    
+    .light-theme {
+      --bg-primary: #f8fafc;
+      --bg-secondary: #f1f5f9;
+      --text-primary: #0f172a;
+      --text-secondary: #1e293b;
+      --border-color: #cbd5e1;
+      --scrollbar-thumb: #94a3b8;
+      --scrollbar-track: #f1f5f9;
+      --button-bg: #6366f1;
+      --button-hover: #4f46e5;
+      --tooltip-bg: #e2e8f0;
+      --toast-bg: #ffffff;
+      --toast-border: #e2e8f0;
+      --input-bg: #ffffff;
+      --input-border: #e2e8f0;
+      --input-text: #0f172a;
+      --resume-bg: #ffffff;
+      --resume-text: #0f172a;
+    }
+    
+    .glass-theme {
+      --bg-primary: rgba(255, 255, 255, 0.85);
+      --bg-secondary: rgba(255, 255, 255, 0.65);
+      --text-primary: #0f172a;
+      --text-secondary: #1e293b;
+      --border-color: rgba(203, 213, 225, 0.5);
+      --scrollbar-thumb: rgba(148, 163, 184, 0.5);
+      --scrollbar-track: rgba(241, 245, 249, 0.5);
+      --button-bg: rgba(99, 102, 241, 0.9);
+      --button-hover: rgba(79, 70, 229, 0.9);
+      --tooltip-bg: rgba(226, 232, 240, 0.8);
+      --toast-bg: rgba(255, 255, 255, 0.8);
+      --toast-border: rgba(226, 232, 240, 0.8);
+      --input-bg: rgba(255, 255, 255, 0.7);
+      --input-border: rgba(226, 232, 240, 0.7);
+      --input-text: #0f172a;
+      --resume-bg: #ffffff;
+      --resume-text: #0f172a;
+      backdrop-filter: blur(8px);
+    }
+    
+    /* Base styles */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: var(--font-family);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      line-height: 1.6;
+      transition: var(--transition);
+      min-height: 100vh;
+    }
+    
+    body.glass-theme {
+      background-image: linear-gradient(135deg, rgba(106, 64, 214, 0.1) 0%, rgba(99, 102, 241, 0.1) 100%);
+    }
+
+    #app {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+    }
+    
+    /* Header */
+    .header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 0.75rem 1.5rem;
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: var(--transition);
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    /* Buttons */
+    .btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: var(--border-radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.875rem;
+      border: none;
+      outline: none;
+      background-color: var(--button-bg);
+      color: white;
+    }
+    
+    .btn:hover {
+      background-color: var(--button-hover);
+    }
+    
+    .btn-outlined {
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+    }
+    
+    .btn-outlined:hover {
+      background-color: var(--bg-secondary);
+      color: var(--primary);
+    }
+    
+    .btn-icon {
+      padding: 0.5rem;
+      border-radius: 50%;
+      background-color: transparent;
+      border: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-primary);
+    }
+    
+    .btn-icon:hover {
+      background-color: var(--bg-secondary);
+      color: var(--primary);
+    }
+    
+    /* Main content */
+    .main-container {
+      display: flex;
+      height: calc(100vh - 65px);
+      overflow: hidden;
+    }
+
+    .panel-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+    }
+    
+    .panel {
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border-color);
+      background-color: var(--bg-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .panel-content {
+      height: calc(100% - 44px);
+      overflow: auto;
+    }
+    
+    /* Editor panel */
+    .editor-panel {
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .CodeMirror {
+      height: 100% !important;
+      font-family: var(--font-family-code);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+    
+    .CodeMirror-gutters {
+      border-right: 1px solid var(--border-color);
+    }
+    
+    .CodeMirror-scrollbar-filler {
+      background-color: transparent;
+    }
+    
+    /* Preview panel */
+    .preview-panel {
+      background: repeating-linear-gradient(
+        -45deg,
+        #fff 0px,
+        #fff 10px,
+         blue 10px,
+         blue 20px
+      );
+    }
+    
+    .preview-content {
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
+      height: 100%;
+      overflow: auto;
+      background-color: var(--bg-primary);
+    }
+    
+    .preview-wrapper {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+      background-color: var(--resume-bg);
+      box-shadow: var(--shadow);
+      border-radius: var(--border-radius);
+      padding: 2rem;
+      height: fit-content;
+      position: relative;
+    }
+    
+    /* Resume styles */
+    #resume {
+      font-family: var(--font-family-resume);
+      color: var(--resume-text);
+    }
+    
+    #resume header {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+    
+    #resume h1 {
+      margin: 0.75rem 0 0.5rem;
+      font-weight: 700;
+      font-size: 2rem;
+      color: var(--primary);
+    }
+    
+    #resume header p {
+      color: var(--gray-600);
+    }
+    
+    #resume #profile-img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 3px solid var(--primary-light);
+    }
+    
+    #resume section {
+      margin-bottom: 1.5rem;
+    }
+    
+    #resume h2 {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+      color: var(--primary-dark);
+      border-bottom: 2px solid var(--gray-200);
+      padding-bottom: 0.25rem;
+    }
+    
+    #resume ul {
+      padding-left: 1.5rem;
+    }
+    
+    #resume li {
+      margin-bottom: 0.5rem;
+    }
+    
+    /* Tooltip */
+    .tooltip {
+      position: relative;
+    }
+    
+    .tooltip::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 125%;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 0.5rem;
+      border-radius: var(--border-radius);
+      background-color: var(--tooltip-bg);
+      color: var(--text-primary);
+      font-size: 0.75rem;
+      white-space: nowrap;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .tooltip:hover::after {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    /* Theme toggle */
+    .theme-toggle {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-color);
+      border-radius: 2rem;
+      padding: 0.25rem;
+      position: relative;
+    }
+    
+    .theme-option {
+      padding: 0.25rem 0.5rem;
+      border-radius: 1rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      transition: var(--transition);
+      z-index: 1;
+    }
+    
+    .theme-option.active {
+      color: white;
+    }
+    
+    .theme-indicator {
+      position: absolute;
+      height: 80%;
+      border-radius: 1rem;
+      background-color: var(--primary);
+      transition: var(--transition);
+      z-index: 0;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .modal-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      width: 90%;
+      max-width: 600px;
+      background-color: var(--bg-secondary);
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow-lg);
+      padding: 1.5rem;
+      transform: translateY(-20px);
+      transition: var(--transition);
+    }
+    
+    .modal-overlay.active .modal {
+      transform: translateY(0);
+    }
+    
+    .modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+    
+    .modal-title {
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+    
+    .modal-close {
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-size: 1.25rem;
+      color: var(--text-secondary);
+    }
+    
+    .modal-body {
+      margin-bottom: 1.5rem;
+    }
+    
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+
+    /* Onboarding */
+    .onboarding {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .onboarding.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .onboarding-content {
+      max-width: 600px;
+      padding: 2rem;
+      border-radius: var(--border-radius);
+      background-color: var(--bg-secondary);
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    
+    .onboarding-title {
+      margin-bottom: 1rem;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+    }
+    
+    .onboarding-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .onboarding-step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      text-align: left;
+    }
+  
+    
+    .step-number {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    
+    /* Toast notification */
+    /* .toast {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      padding: 1rem;
+      border-radius: var(--border-radius);
+      background-color: var(--toast-bg);
+      border: 1px solid var(--toast-border);
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      z-index: 900;
+      transform: translateY(100px);
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .toast.active {
+      transform: translateY(0);
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .toast-icon {
+      font-size: 1.25rem;
+      color: var(--primary);
+    }
+    
+    .toast-content {
+      flex: 1;
+    }
+    
+    .toast-title {
+      font-weight: 600;
+      margin-bottom: 0.25rem;
+    }
+    
+    .toast-close {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+     */
+    /* Image upload */
+    /* .image-upload {
+      position: relative;
+    }
+    
+    .upload-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(3px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+      gap: 0.5rem;
+      color: white;
+      border-radius: 50%;
+    }
+    
+    .image-upload:hover .upload-overlay {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .upload-input {
+      display: none;
+    }
+     */
+    /* Placeholders for when image loading */
+    /* .image-placeholder {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background-color: var(--gray-300);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-500);
+      font-size: 2rem; */
+    
+
+    /* Gutter for split.js */
+    .gutter {
+      background-color: var(--border-color);
+      background-repeat: no-repeat;
+      background-position: 50%;
+    }
+    
+    .gutter.gutter-horizontal {
+      background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg==');
+      cursor: col-resize;
+      width: 6px !important;
+    }
+    
+    /* Scrollbar styles */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    
+    ::-webkit-scrollbar-track {
+      background: var(--scrollbar-track);
+    }
+    
+    ::-webkit-scrollbar-thumb {
+      background: var(--scrollbar-thumb);
+      border-radius: 4px;
+    }
+    
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--primary);
+    }
+    
+    /* Mobile view */
+    @media (max-width: 768px) {
+      .panel-container {
+        flex-direction: column;
+      }
+      
+      .panel {
+        height: 50%;
+        transition: var(--transition);
+      }
+      
+      .mobile-tab-controls {
+        display: flex !important;
+        border-bottom: 1px solid var(--border-color);
+      }
+      
+      .mobile-tab {
+        flex: 1;
+        padding: 0.75rem;
+        text-align: center;
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+      }
+      
+      .mobile-tab.active {
+        border-bottom-color: var(--primary);
+        color: var(--primary);
+      }
+      
+      .panel.hidden-mobile {
+        height: 0;
+        overflow: hidden;
+      }
+      
+      .header-actions {
+        gap: 0.5rem;
+      }
+      
+      .btn span {
+        display: none;
+      }
+      
+      .tooltip::after {
+        display: none;
+      }
+      
+      .theme-toggle {
+        display: none;
+      }
+    }
+    
+    /* Medium screens */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .preview-wrapper {
+        max-width: 700px;
+      }
+      
+      .btn span {
+        display: inline;
+      }
+      
+      .mobile-tab-controls {
+        display: none !important;
+      }
+    }
+    
+    /* Hide mobile elements by default */
+    .mobile-tab-controls {
+      display: none;
+    }
+
+    /* Loading indicator */
+    .loading {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+    
+    .loading.active {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid rgba(99, 102, 241, 0.2);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+  </style>
+</head>
+<body class="light-theme">
+  <div id="app">
+    <!-- Header -->
+    <header class="header">
+      <div class="logo">
+        <i class="fa-solid fa-file-code"></i>
+        <span>Andy's Resume</span>
+      </div>
+      
+      <div class="header-actions">
+        <div class="theme-toggle">
+          <div class="theme-option" data-theme="light">
+            <i class="fa-solid fa-sun"></i>
+          </div>
+          <div class="theme-option" data-theme="dark">
+            <i class="fa-solid fa-moon"></i>
+          </div>
+          <div class="theme-option" data-theme="glass">
+            <i class="fa-solid fa-palette"></i>
+          </div>
+          <div class="theme-indicator"></div>
+        </div>
+        
+        <button id="instructions-btn" class="btn btn-outlined tooltip" data-tooltip="How to use">
+          <i class="fa-solid fa-circle-info"></i>
+          <span>Instructions</span>
+        </button>
+        
+        <button id="reset-btn" class="btn btn-outlined tooltip" data-tooltip="Reset to default">
+          <i class="fa-solid fa-rotate-left"></i>
+          <span>Reset</span>
+        </button>
+        
+        <button id="download-btn" class="btn tooltip" data-tooltip="Download as PDF">
+          <i class="fa-solid fa-download"></i>
+          <span>Download PDF</span>
+        </button>
+      </div>
+    </header>
+    
+    <!-- Mobile tabs -->
+    <div class="mobile-tab-controls">
+      <div class="mobile-tab active" data-panel="editor">Editor</div>
+      <div class="mobile-tab" data-panel="preview">Preview</div>
+    </div>
+    
+    <!-- Main Container -->
+    <div class="main-container">
+      <div class="panel-container">
+        <!-- Editor Panel -->
+        <div class="panel editor-panel" id="editor-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-code"></i>
+              Resume Code
+            </div>
+          </div>
+          <div class="panel-content">
+            <textarea id="code-editor"></textarea>
+          </div>
+        </div>
+        
+        <!-- Preview Panel -->
+        <div class="panel preview-panel" id="preview-panel">
+          <div class="panel-header">
+            <div class="panel-title">
+              <i class="fa-solid fa-eye"></i>
+              Live Preview
+            </div>
+          </div>
+          <div class="panel-content preview-content">
+            <div class="preview-wrapper">
+              <div class="loading">
+                <div class="spinner"></div>
+              </div>
+              <div id="resume-preview"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Instructions Modal -->
+  <div class="modal-overlay" id="instructions-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title">How to Use CodeResume</h3>
+        <button class="modal-close"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p>Welcome to CodeResume, where you can create beautiful resumes using code!</p>
+        <br>
+        <h4>Getting started:</h4>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>Edit the HTML code in the editor panel on the left</li>
+          <li>Watch your resume update in real-time on the right</li>
+          <li>Customize all sections including personal info, education, experience, etc</li>
+          <li>Download your finished resume as a PDF</li>
+        </ul>
+        <br>
+        <h4>Tips:</h4>
+        <ul style="margin-left: 20px; margin-top: 10px;">
+          <li>Use the provided structure to maintain proper formatting</li>
+          <li>Add or remove sections as needed</li>
+          <li>Your code is automatically saved in your browser</li>
+          <li>Click "Reset" to return to the default template</li>
+          <li>Try different themes using the theme toggle in the header</li>
+        </ul>
+      </div>
+      <div class="modal-footer">
+        <button class="btn">Got it!</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Onboarding -->
+  <div class="onboarding active" id="onboarding">
+    <!-- <div class="onboarding-content"> -->
+      <!-- <h2 class="onboarding-title">Welcome to CodeResume!</h2> -->
+      <!-- <div class="onboarding-steps"> -->
+        <!-- <div class="onboarding-step"> -->
+          <!-- <div class="step-number">1</div> -->
+          <!-- <div> -->
+            <!-- <h4>Edit Code</h4>
+            <p>Modify the HTML code in the left panel to customize your resume</p>
+          </div>
+        </div> -->
+        <div class="onboarding-step">
+          <!-- <div class="step-number">2</div>
+          <div> -->
+            <!-- <h4>See Live Preview</h4>
+            <p>Watch your changes update in real time on the right panel</p>
+          </div>
+        </div> -->
+        <div class="onboarding-step">
+          <!-- <div class="step-number">3</div>
+          <div>
+            <h4>Download PDF</h4>
+            <p>When you're done, download your professional resume as a PDF</p> -->
+          </div>
+        </div>
+      </div>
+      <button class="b" id="onboarding-close"></button>
+    <!-- </div>
+  </div> -->
+  
+  <!-- Toast notification -->
+  <!-- <div class="toast" id="toast"> -->
+    <!-- <div class="toast-icon"> -->
+      <!-- <i class="fa-solid fa-circle-check"></i> -->
+    <!-- </div> -->
+    <!-- <div class="toast-content"> -->
+      <!-- <div class="toast-title">Success!</div>
+      <div class="toast-message">Your resume has been downloaded.</div>
+    </div> -->
+    <button class="toast-close" id="toast-clos"></button>
+  <!-- </div> -->
+
+  <script id="app-script">
+    // Default resume HTML template
+    const defaultResumeHTML = `<div id="resume">
+  <header>
+    <h1>John Smith</h1>
+    <p>Full Stack Developer | john.smith@example.com | (555) 123-4567 | San Francisco, CA</p>
+  </header>
+  <section>
+    <h2>Experience</h2>
+        <strong>Full Stack Developer</strong> - WebSolutions LLC (2018-2021)
+        <ul>
+          <li>Developed responsive web applications using React and Node.js</li>
+          <li>Optimized database queries resulting in 30% faster page load times</li>
+          <li>Collaborated with UX designers to implement intuitive user interfaces</li>
+        </ul>
+  </section>
+
+  <section>
+    <h2>Education</h2>
+    <ul>
+      <li><strong>Master of Computer Science</strong> - Stanford University (2018)</li>
+      <li><strong>Bachelor of Science in Software Engineering</strong> - University of California, Berkeley (2016)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Skills</h2>
+    <ul>
+      <li><strong>Programming Languages:</strong> JavaScript (ES6+), TypeScript, Python, Java</li>
+      <li><strong>Frontend:</strong> React, Vue.js, HTML5, CSS3, SASS, Tailwind CSS</li>
+      <li><strong>Backend:</strong> Node.js, Express, Django, Spring Boot</li>
+      <li><strong>Databases:</strong> MongoDB, PostgreSQL, MySQL, Redis</li>
+      <li><strong>DevOps:</strong> Docker, Kubernetes, AWS, CI/CD, Git</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Projects</h2>
+    <ul>
+      <li>
+        <strong>E-commerce Platform</strong> - Built a full-stack e-commerce solution with React, Node.js, and MongoDB
+        <ul>
+          <li>Implemented secure payment processing with Stripe</li>
+          <li>Designed responsive UI with 99% mobile compatibility</li>
+        </ul>
+      </li>
+      <li>
+        <strong>Task Management API</strong> - Created RESTful API with Node.js and Express
+        <ul>
+          <li>Implemented JWT authentication and role-based access control</li>
+          <li>Achieved 95% test coverage with Jest</li>
+        </ul>
+      </li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Certifications</h2>
+    <ul>
+      <li>AWS Certified Solutions Architect (2023)</li>
+      <li>Google Professional Cloud Developer (2022)</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>Languages</h2>
+    <ul>
+      <li>English (Native)</li>
+      <li>Spanish (Fluent)</li>
+    </ul>
+  </section>
+</div>`;
+
+    // DOM Elements
+    const codeEditor = document.getElementById('code-editor');
+    const resumePreview = document.getElementById('resume-preview');
+    const downloadBtn = document.getElementById('download-btn');
+    const resetBtn = document.getElementById('reset-btn');
+    const instructionsBtn = document.getElementById('instructions-btn');
+    const instructionsModal = document.getElementById('instructions-modal');
+    const modalCloseBtn = document.querySelector('.modal-close');
+    const modalOkBtn = document.querySelector('.modal-footer .btn');
+    const onboarding = document.getElementById('onboarding');
+    const onboardingCloseBtn = document.getElementById('onboarding-close');
+    const toast = document.getElementById('toast');
+    const toastCloseBtn = document.querySelector('.toast-close');
+    const themeToggle = document.querySelector('.theme-toggle');
+    const themeOptions = document.querySelectorAll('.theme-option');
+    const themeIndicator = document.querySelector('.theme-indicator');
+    const mobileTabs = document.querySelectorAll('.mobile-tab');
+    const editorPanel = document.getElementById('editor-panel');
+    const previewPanel = document.getElementById('preview-panel');
+    const loading = document.querySelector('.loading');
+
+    // Initialize CodeMirror
+    const editor = CodeMirror.fromTextArea(codeEditor, {
+      mode: 'htmlmixed',
+      lineNumbers: true,
+      theme: 'material-darker',
+      lineWrapping: true,
+      indentUnit: 2,
+      tabSize: 2,
+      autoCloseTags: true,
+      autoCloseBrackets: true,
+      matchBrackets: true
+    });
+
+    // Set initial content
+    const savedContent = localStorage.getItem('resumeHTML') || defaultResumeHTML;
+    editor.setValue(savedContent);
+    updatePreview(savedContent);
+
+    // Split panels
+    Split(['.editor-panel', '.preview-panel'], {
+      sizes: [50, 50],
+      minSize: 300,
+      gutterSize: 6,
+      snapOffset: 0
+    });
+
+    // Editor change event
+    editor.on('change', () => {
+      const content = editor.getValue();
+      updatePreview(content);
+      localStorage.setItem('resumeHTML', content);
+    });
+
+    // Update preview with content
+    function updatePreview(content) {
+      showLoading();
+      setTimeout(() => {
+        resumePreview.innerHTML = content;
+        setupImageUpload();
+        hideLoading();
+      }, 300);
+    }
+
+    // Setup image upload
+    function setupImageUpload() {
+      const imageElement = resumePreview.querySelector('#profile-img');
+      const imageUploadDiv = resumePreview.querySelector('.image-upload');
+      
+      if (imageElement && !imageUploadDiv.querySelector('.upload-input')) {
+        const uploadInput = document.createElement('input');
+        uploadInput.type = 'file';
+        uploadInput.accept = 'image/*';
+        uploadInput.className = 'upload-input';
+        imageUploadDiv.appendChild(uploadInput);
+        
+        imageUploadDiv.addEventListener('click', () => {
+          uploadInput.click();
+        });
+        
+        uploadInput.addEventListener('change', (event) => {
+          if (event.target.files && event.target.files[0]) {
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+              imageElement.src = e.target.result;
+              // Update the editor with the new image
+              let content = editor.getValue();
+              content = content.replace(/src="[^"]*"(?=[^>]*id="profile-img")/, `src="${e.target.result}"`);
+              editor.setValue(content);
+            };
+            
+            reader.readAsDataURL(event.target.files[0]);
+          }
+        });
+      }
+    }
+
+    // Reset button
+    resetBtn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reset? All your changes will be lost.')) {
+        editor.setValue(defaultResumeHTML);
+        localStorage.setItem('resumeHTML', defaultResumeHTML);
+        updatePreview(defaultResumeHTML);
+        showToast('Reset successful', 'Your resume has been reset to default.');
+      }
+    });
+
+    // Download PDF
+    downloadBtn.addEventListener('click', () => {
+      showLoading();
+      
+      const element = resumePreview.querySelector('#resume');
+      const resumeTitle = element.querySelector('h1').textContent.trim() || 'Resume';
+      
+      const opt = {
+        margin: [10, 10],
+        filename: `${resumeTitle}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, useCORS: true },
+        jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
+      };
+      
+      // Slight timeout to allow loading spinner to appear
+      setTimeout(() => {
+        html2pdf().set(opt).from(element).save()
+          .then(() => {
+            hideLoading();
+            showToast('Success!', 'Your resume has been downloaded as PDF.');
+          })
+          .catch(error => {
+            hideLoading();
+            showToast('Error', 'Failed to generate PDF. Please try again.');
+            console.error('PDF generation failed:', error);
+          });
+      }, 500);
+    });
+
+    // Instructions Modal
+    instructionsBtn.addEventListener('click', () => {
+      instructionsModal.classList.add('active');
+    });
+    
+    modalCloseBtn.addEventListener('click', () => {
+      instructionsModal.classList.remove('active');
+    });
+    
+    modalOkBtn.addEventListener('click', () => {
+      instructionsModal.classList.remove('active');
+    });
+    
+    // Close modal when clicking outside
+    instructionsModal.addEventListener('click', (e) => {
+      if (e.target === instructionsModal) {
+        instructionsModal.classList.remove('active');
+      }
+    });
+
+    // Onboarding
+    onboardingCloseBtn.addEventListener('click', () => {
+      onboarding.classList.remove('active');
+      localStorage.setItem('onboardingComplete', true);
+    });
+    
+    // Check if onboarding has been completed
+    if (localStorage.getItem('onboardingComplete')) {
+      onboarding.classList.remove('active');
+    }
+
+    // Toast notification
+    function showToast(title, message) {
+      const toastTitle = toast.querySelector('.toast-title');
+      const toastMessage = toast.querySelector('.toast-message');
+      
+      toastTitle.textContent = title;
+      toastMessage.textContent = message;
+      
+      toast.classList.add('active');
+      
+      // Auto hide after 4 seconds
+      setTimeout(() => {
+        toast.classList.remove('active');
+      }, 4000);
+    }
+    
+    toastCloseBtn.addEventListener('click', () => {
+      toast.classList.remove('active');
+    });
+
+    // Theme toggle
+    function updateThemeIndicator() {
+      const activeTheme = document.body.className;
+      const activeOption = themeToggle.querySelector(`[data-theme="${activeTheme.split('-')[0]}"]`);
+      
+      if (activeOption) {
+        themeOptions.forEach(option => option.classList.remove('active'));
+        activeOption.classList.add('active');
+        
+        const optionRect = activeOption.getBoundingClientRect();
+        const toggleRect = themeToggle.getBoundingClientRect();
+        
+        themeIndicator.style.width = `${optionRect.width}px`;
+        themeIndicator.style.left = `${optionRect.left - toggleRect.left}px`;
+      }
+    }
+    
+    themeOptions.forEach(option => {
+      option.addEventListener('click', () => {
+        const theme = option.dataset.theme;
+        document.body.className = `${theme}-theme`;
+        localStorage.setItem('theme', theme);
+        
+        // Update editor theme based on selected theme
+        if (theme === 'dark') {
+          editor.setOption('theme', 'material-darker');
+        } else {
+          editor.setOption('theme', 'material');
+        }
+        
+        updateThemeIndicator();
+      });
+    });
+    
+    // Initialize theme from localStorage
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    document.body.className = `${savedTheme}-theme`;
+    
+    if (savedTheme === 'dark') {
+      editor.setOption('theme', 'material-darker');
+    } else {
+      editor.setOption('theme', 'material');
+    }
+    
+    // Mobile tabs
+    mobileTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        const panelName = tab.dataset.panel;
+        
+        mobileTabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        
+        if (panelName === 'editor') {
+          editorPanel.classList.remove('hidden-mobile');
+          previewPanel.classList.add('hidden-mobile');
+        } else {
+          editorPanel.classList.add('hidden-mobile');
+          previewPanel.classList.remove('hidden-mobile');
+        }
+      });
+    });
+
+    // Loading indicator
+    function showLoading() {
+      loading.classList.add('active');
+    }
+    
+    function hideLoading() {
+      loading.classList.remove('active');
+    }
+    
+    // Initial theme indicator positioning (after DOM fully loaded)
+    window.addEventListener('DOMContentLoaded', () => {
+      updateThemeIndicator();
+      setupImageUpload();
+    });
+    
+    // Handle window resize
+    window.addEventListener('resize', () => {
+      updateThemeIndicator();
+      editor.refresh();
+    });
+  </script>
+</body>
+</html>
